@@ -8,11 +8,13 @@
 - このフォルダは `claude-workspace`（親リポジトリ）とは別の**独立したGitリポジトリ**。
   親リポには受験生プロフィール等の個人情報フォルダが同居しているため、公開する対象は
   絶対に混在させない（`3D-bunkasai-2026` と同じ扱い。親の `.gitignore` にこのフォルダを追加済み）。
-- GitHub: `taearimain-del/eiken-pre1-kakomon-player`（**Private**）。
-  ※ GitHub Pagesは現在のプランではPrivateリポジトリに対して使えなかった（`422: Your current
-  plan does not support GitHub Pages for this repository`）。Publicにする案もあったが、
-  過去問音声の著作権グレーな面を考慮してリポジトリはPrivateのまま維持し、公開はNetlify経由にした
-  （2026-08-04、ryuの判断）。
+- GitHub: `taearimain-del/eiken-pre1-kakomon-player`（**Private**、コード管理用の本体）。
+  ※ GitHub PagesはPrivateリポジトリに対して使えなかった（`422: Your current plan does not
+  support GitHub Pages for this repository`）ため、当初はNetlifyの非公開URLのみで運用していた。
+- 追加で `taearimain-del/eiken-pre1-kakomon-site`（**Public**、GitHub Pages公開専用）を用意。
+  同じローカルフォルダから2つのリモート（`origin`=Private本体、`pages`=Public公開用）に
+  push する構成（2026-08-04、著作権グレーな面のリスクを承知の上でryuがPublic化を選択）。
+  作業時は両方 `git push origin main` / `git push pages main` を忘れないこと。
 
 ## データについて
 - 教材：英検準1級 過去問（2023年度第3回〜2025年度第2回、計6回分）
