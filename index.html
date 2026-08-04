@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>英検準1級 過去問音声プレイヤー</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f5f6f8;
+    --panel: #ffffff;
+    --text: #1c1e21;
+    --muted: #6b7280;
+    --border: #e2e4e9;
+    --accent: #2f6fed;
+    --accent-weak: #e8f0ff;
+    --done: #17a34a;
+    --done-weak: #e7f8ee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16181d;
+      --panel: #1f2229;
+      --text: #eceef1;
+      --muted: #9aa0aa;
+      --border: #2e323b;
+      --accent: #6ea1ff;
+      --accent-weak: #22314f;
+      --done: #4ade80;
+      --done-weak: #16351f;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  .layout {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 16px 16px 140px;
+  }
+  h1 {
+    font-size: 1.15rem;
+    margin: 8px 0 4px;
+  }
+  .sub {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  select, input[type="text"] {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+  input[type="text"] {
+    flex: 1;
+    min-width: 160px;
+  }
+  .progress-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .progress-bar-outer {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--border);
+    overflow: hidden;
+  }
+  .progress-bar-inner {
+    height: 100%;
+    background: var(--done);
+    width: 0%;
+  }
+  .section-group {
+    margin-bottom: 18px;
+  }
+  .section-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin: 18px 0 8px;
+    color: var(--text);
+  }
+  ul.track-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  li.track {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+  }
+  li.track:hover {
+    border-color: var(--accent);
+  }
+  li.track.active {
+    background: var(--accent-weak);
+    border-color: var(--accent);
+  }
+  .check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+  li.track.done .check {
+    background: var(--done-weak);
+    border-color: var(--done);
+    color: var(--done);
+  }
+  .track-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .track-title {
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .track-pos {
+    font-size: 0.75rem;
+    color: var(--muted);
+    flex: none;
+  }
+  .player-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--panel);
+    border-top: 1px solid var(--border);
+    padding: 10px 16px 16px;
+  }
+  .player-inner {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .player-title {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  audio {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .controls button {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .controls button:hover {
+    border-color: var(--accent);
+  }
+  .controls button.primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .speed-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+  }
+  .speed-group span {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .speed-group button.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .empty {
+    color: var(--muted);
+    font-size: 0.85rem;
+    padding: 20px 0;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <h1>英検準1級 過去問音声プレイヤー</h1>
+  <div class="sub" id="subLine">2023〜2025年度 全6回分 / Listening・Speaking</div>
+
+  <div class="progress-summary">
+    <span id="progressText">0 / 0 聴取済み</span>
+    <div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar"></div></div>
+  </div>
+
+  <div class="filters">
+    <select id="roundFilter"></select>
+    <select id="statusFilter">
+      <option value="all">すべて</option>
+      <option value="done">聴取済みのみ</option>
+      <option value="notdone">未聴のみ</option>
+    </select>
+    <input type="text" id="searchBox" placeholder="トラック名で検索（例: Part1, No5）">
+  </div>
+
+  <div id="listContainer"></div>
+</div>
+
+<div class="player-bar">
+  <div class="player-inner">
+    <div class="player-title" id="nowPlayingTitle">再生するトラックを選んでください</div>
+    <audio id="audioEl" controls></audio>
+    <div class="controls">
+      <button id="prevBtn">◀ 前へ</button>
+      <button id="markDoneBtn" class="primary">聴取済みにする</button>
+      <button id="nextBtn">次へ ▶</button>
+      <div class="speed-group">
+        <span>速度</span>
+        <button data-speed="0.75">0.75x</button>
+        <button data-speed="1.0" class="active">1.0x</button>
+        <button data-speed="1.25">1.25x</button>
+        <button data-speed="1.5">1.5x</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = "eiken_junichikyu_kakomon_progress_v1";
+
+function loadProgress() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+  } catch (e) {
+    return {};
+  }
+}
+function saveProgress(progress) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+}
+
+let roundsData = {};   // raw tracks.json
+let allTracks = [];    // flattened { id, file, name, roundKey, roundLabel, sectionKey, sectionLabel }
+let tracks = [];       // tracks belonging to the selected round (used for prev/next navigation)
+let progress = loadProgress();
+let currentIndex = -1; // index into `tracks`
+let filtered = [];
+
+const audioEl = document.getElementById("audioEl");
+const nowPlayingTitle = document.getElementById("nowPlayingTitle");
+const listContainer = document.getElementById("listContainer");
+const roundFilter = document.getElementById("roundFilter");
+const statusFilter = document.getElementById("statusFilter");
+const searchBox = document.getElementById("searchBox");
+const progressText = document.getElementById("progressText");
+const progressBar = document.getElementById("progressBar");
+
+function getEntry(id) {
+  return progress[id] || { done: false, position: 0 };
+}
+function setEntry(id, patch) {
+  progress[id] = { ...getEntry(id), ...patch };
+  saveProgress(progress);
+}
+
+function buildRoundOptions() {
+  const keys = Object.keys(roundsData);
+  roundFilter.innerHTML = keys
+    .map(k => `<option value="${k}">${roundsData[k].label}</option>`)
+    .join("");
+}
+
+function tracksForRound(roundKey) {
+  const round = roundsData[roundKey];
+  if (!round) return [];
+  const out = [];
+  for (const section of round.sections) {
+    for (const t of section.tracks) {
+      out.push({
+        id: t.file,
+        file: t.file,
+        name: t.name,
+        roundKey,
+        roundLabel: round.label,
+        sectionKey: section.key,
+        sectionLabel: section.label,
+      });
+    }
+  }
+  return out;
+}
+
+function applyFilters() {
+  const roundKey = roundFilter.value;
+  tracks = tracksForRound(roundKey);
+
+  const status = statusFilter.value;
+  const q = searchBox.value.trim().toLowerCase();
+
+  filtered = tracks.filter(t => {
+    const done = getEntry(t.id).done;
+    if (status === "done" && !done) return false;
+    if (status === "notdone" && done) return false;
+    if (q) {
+      const hay = (t.sectionLabel + " " + t.name).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  currentIndex = -1;
+  renderList();
+}
+
+function renderProgressSummary() {
+  const doneCount = allTracks.filter(t => getEntry(t.id).done).length;
+  progressText.textContent = `${doneCount} / ${allTracks.length} 聴取済み（全6回分）`;
+  progressBar.style.width = allTracks.length ? `${(doneCount / allTracks.length) * 100}%` : "0%";
+}
+
+function renderList() {
+  renderProgressSummary();
+  listContainer.innerHTML = "";
+
+  if (filtered.length === 0) {
+    listContainer.innerHTML = '<div class="empty">条件に一致するトラックがありません</div>';
+    return;
+  }
+
+  const bySection = {};
+  for (const t of filtered) {
+    (bySection[t.sectionKey] ??= { label: t.sectionLabel, items: [] }).items.push(t);
+  }
+
+  for (const sectionKey of Object.keys(bySection)) {
+    const group = document.createElement("div");
+    group.className = "section-group";
+
+    const title = document.createElement("div");
+    title.className = "section-title";
+    title.textContent = bySection[sectionKey].label;
+    group.appendChild(title);
+
+    const ul = document.createElement("ul");
+    ul.className = "track-list";
+
+    for (const t of bySection[sectionKey].items) {
+      const entry = getEntry(t.id);
+      const activeId = currentIndex >= 0 ? tracks[currentIndex]?.id : null;
+      const li = document.createElement("li");
+      li.className = "track" + (entry.done ? " done" : "") + (activeId === t.id ? " active" : "");
+
+      const check = document.createElement("div");
+      check.className = "check";
+      check.textContent = entry.done ? "✓" : "";
+      check.title = "クリックで聴取済み/未聴を切り替え";
+      check.addEventListener("click", (e) => {
+        e.stopPropagation();
+        setEntry(t.id, { done: !entry.done });
+        applyFilters();
+      });
+
+      const info = document.createElement("div");
+      info.className = "track-info";
+      const titleDiv = document.createElement("div");
+      titleDiv.className = "track-title";
+      titleDiv.textContent = t.name;
+      info.appendChild(titleDiv);
+
+      const posDiv = document.createElement("div");
+      posDiv.className = "track-pos";
+      posDiv.textContent = entry.position > 0 ? formatTime(entry.position) + "〜" : "";
+
+      li.appendChild(check);
+      li.appendChild(info);
+      li.appendChild(posDiv);
+
+      li.addEventListener("click", () => playTrackById(t.id));
+
+      ul.appendChild(li);
+    }
+
+    group.appendChild(ul);
+    listContainer.appendChild(group);
+  }
+}
+
+function formatTime(sec) {
+  sec = Math.floor(sec);
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
+
+function playTrackById(id) {
+  const idx = tracks.findIndex(t => t.id === id);
+  if (idx === -1) return;
+  playTrackByIndex(idx);
+}
+
+function playTrackByIndex(idx) {
+  if (idx < 0 || idx >= tracks.length) return;
+  currentIndex = idx;
+  const t = tracks[idx];
+  const entry = getEntry(t.id);
+
+  audioEl.src = t.file;
+  nowPlayingTitle.textContent = `${t.sectionLabel} — ${t.name}`;
+
+  audioEl.addEventListener("loadedmetadata", function onLoaded() {
+    if (entry.position && entry.position < audioEl.duration - 2) {
+      audioEl.currentTime = entry.position;
+    }
+    audioEl.removeEventListener("loadedmetadata", onLoaded);
+  });
+
+  audioEl.play().catch(() => {});
+  renderList();
+}
+
+let saveTimer = null;
+audioEl.addEventListener("timeupdate", () => {
+  if (currentIndex === -1) return;
+  const t = tracks[currentIndex];
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    setEntry(t.id, { position: audioEl.currentTime });
+  }, 500);
+});
+
+audioEl.addEventListener("ended", () => {
+  if (currentIndex === -1) return;
+  const t = tracks[currentIndex];
+  setEntry(t.id, { done: true, position: 0 });
+  renderList();
+});
+
+document.getElementById("markDoneBtn").addEventListener("click", () => {
+  if (currentIndex === -1) return;
+  const t = tracks[currentIndex];
+  const entry = getEntry(t.id);
+  setEntry(t.id, { done: !entry.done });
+  renderList();
+});
+
+document.getElementById("prevBtn").addEventListener("click", () => {
+  if (filtered.length === 0 || currentIndex === -1) return;
+  const posInFiltered = filtered.findIndex(t => t.id === tracks[currentIndex].id);
+  if (posInFiltered > 0) playTrackById(filtered[posInFiltered - 1].id);
+});
+document.getElementById("nextBtn").addEventListener("click", () => {
+  if (filtered.length === 0) return;
+  if (currentIndex === -1) { playTrackById(filtered[0].id); return; }
+  const posInFiltered = filtered.findIndex(t => t.id === tracks[currentIndex].id);
+  if (posInFiltered >= 0 && posInFiltered < filtered.length - 1) {
+    playTrackById(filtered[posInFiltered + 1].id);
+  }
+});
+
+document.querySelectorAll(".speed-group button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    audioEl.playbackRate = parseFloat(btn.dataset.speed);
+    document.querySelectorAll(".speed-group button").forEach(b => b.classList.toggle("active", b === btn));
+  });
+});
+
+roundFilter.addEventListener("change", applyFilters);
+statusFilter.addEventListener("change", applyFilters);
+searchBox.addEventListener("input", applyFilters);
+
+fetch("tracks.json")
+  .then(res => res.json())
+  .then(data => {
+    roundsData = data;
+    allTracks = Object.keys(roundsData).flatMap(k => tracksForRound(k));
+    buildRoundOptions();
+    applyFilters();
+  })
+  .catch(err => {
+    listContainer.innerHTML = '<div class="empty">tracks.json の読み込みに失敗しました。ローカルサーバー経由で開いてください（file:// 直接だと動きません）。</div>';
+    console.error(err);
+  });
+</script>
+</body>
+</html>
