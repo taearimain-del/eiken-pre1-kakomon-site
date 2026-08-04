@@ -6,10 +6,13 @@
 
 ## Gitリポジトリについて（重要）
 - このフォルダは `claude-workspace`（親リポジトリ）とは別の**独立したGitリポジトリ**。
-  親リポには受験生プロフィール等の個人情報フォルダが同居しているため、GitHub Pagesで
-  公開する対象は絶対に混在させない（`3D-bunkasai-2026` と同じ扱い。親の `.gitignore` に
-  このフォルダを追加済み）。
-- GitHubリポジトリ名・可視性・公開URLは、セットアップ完了時にこのファイルに追記する。
+  親リポには受験生プロフィール等の個人情報フォルダが同居しているため、公開する対象は
+  絶対に混在させない（`3D-bunkasai-2026` と同じ扱い。親の `.gitignore` にこのフォルダを追加済み）。
+- GitHub: `taearimain-del/eiken-pre1-kakomon-player`（**Private**）。
+  ※ GitHub Pagesは現在のプランではPrivateリポジトリに対して使えなかった（`422: Your current
+  plan does not support GitHub Pages for this repository`）。Publicにする案もあったが、
+  過去問音声の著作権グレーな面を考慮してリポジトリはPrivateのまま維持し、公開はNetlify経由にした
+  （2026-08-04、ryuの判断）。
 
 ## データについて
 - 教材：英検準1級 過去問（2023年度第3回〜2025年度第2回、計6回分）
@@ -34,5 +37,15 @@
 - 再生速度変更（0.75x/1.0x/1.25x/1.5x）、聴取済みチェック、再生位置の自動保存（localStorage）
 - 進捗キーは `tracks.json` の `file` パスなので、ファイル名やパスを変えると進捗がリセットされる
 
-## デプロイ（GitHub Pages）
-- 本番URL・再デプロイ手順は、初回公開後にここへ追記する。
+## デプロイ（Netlify）
+- 本番URL：https://eiken-pre1-kakomon.netlify.app
+- 使用アカウント：`ryu20001208.jp@gmail.com`（チーム `ryu20001208-jp`）。サイト名 `eiken-pre1-kakomon`。
+- パスワード保護なしで公開（URLを知っていれば誰でもアクセス可）。個人利用目的のため許容。
+  `robots.txt` と `<meta name="robots" content="noindex,nofollow">` で検索エンジンからは隠している。
+- 再デプロイ手順：このフォルダ（`英検準1級過去問プレイヤー/`）で `netlify deploy --prod --dir=.` を実行するだけ。
+  `.netlify/state.json` にsiteIdが設定済みなのでログイン・サイト指定は不要
+  （ただしCLIのログインアカウントが `ryu20001208.jp@gmail.com` になっている必要がある）。
+- 注意：ワークスペースのルート（`CLAUDE 作業場所/`）には別のNetlifyサイト
+  （`claude-workspace-ryuao`）がリンクされている。Netlify関連のコマンドは必ずこのフォルダ内で
+  実行し、ルートでは実行しないこと（`.netlify`が無いサブフォルダで実行すると親の設定を
+  辿ってしまう。既存の「英検準一級」プロジェクトでも同じ注意が書かれている）。
