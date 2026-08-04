@@ -475,6 +475,11 @@ audioEl.addEventListener("ended", () => {
   const t = tracks[currentIndex];
   setEntry(t.id, { done: true, position: 0 });
   renderList();
+
+  const posInFiltered = filtered.findIndex(x => x.id === t.id);
+  if (posInFiltered >= 0 && posInFiltered < filtered.length - 1) {
+    playTrackById(filtered[posInFiltered + 1].id);
+  }
 });
 
 document.getElementById("markDoneBtn").addEventListener("click", () => {
