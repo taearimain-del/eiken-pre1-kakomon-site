@@ -42,7 +42,8 @@
 ## デプロイ（Netlify）
 - 本番URL：https://eiken-pre1-kakomon.netlify.app
 - 使用アカウント：`ryu20001208.jp@gmail.com`（チーム `ryu20001208-jp`）。サイト名 `eiken-pre1-kakomon`。
-- パスワード保護なしで公開（URLを知っていれば誰でもアクセス可）。個人利用目的のため許容。
+- `access-gate.js`（`my-portal-ryu.netlify.app`でホスト）によるパスワード/Googleログインで
+  保護済み（2026-08-04〜。詳細は親CLAUDE.mdの「公開ページのアクセスゲート」参照）。
   `robots.txt` と `<meta name="robots" content="noindex,nofollow">` で検索エンジンからは隠している。
 - 再デプロイ手順：このフォルダ（`英検準1級過去問プレイヤー/`）で `netlify deploy --prod --dir=.` を実行するだけ。
   `.netlify/state.json` にsiteIdが設定済みなのでログイン・サイト指定は不要
