@@ -1,0 +1,54 @@
+# CLAUDE.md — 英検準1級 過去問プレイヤー
+
+英検準1級の過去問（Listening・Speaking音声）を再生するためのプロジェクト。
+（応答スタイル・環境・エンコーディング等の共通ルールは親の `CLAUDE 作業場所/CLAUDE.md` および
+`~/.claude/CLAUDE.md` を参照。ここには本プロジェクト固有の情報のみ書く）
+
+## Gitリポジトリについて（重要）
+- このフォルダは `claude-workspace`（親リポジトリ）とは別の**独立したGitリポジトリ**。
+  親リポには受験生プロフィール等の個人情報フォルダが同居しているため、公開する対象は
+  絶対に混在させない（`3D-bunkasai-2026` と同じ扱い。親の `.gitignore` にこのフォルダを追加済み）。
+- GitHub: `taearimain-del/eiken-pre1-kakomon-player`（**Private**、コード管理用の本体）。
+  ※ GitHub PagesはPrivateリポジトリに対して使えなかった（`422: Your current plan does not
+  support GitHub Pages for this repository`）ため、当初はNetlifyの非公開URLのみで運用していた。
+- 追加で `taearimain-del/eiken-pre1-kakomon-site`（**Public**、GitHub Pages公開専用）を用意。
+  同じローカルフォルダから2つのリモート（`origin`=Private本体、`pages`=Public公開用）に
+  push する構成（2026-08-04、著作権グレーな面のリスクを承知の上でryuがPublic化を選択）。
+  作業時は両方 `git push origin main` / `git push pages main` を忘れないこと。
+
+## データについて
+- 教材：英検準1級 過去問（2023年度第3回〜2025年度第2回、計6回分）
+- 元データ：`C:\Users\Fort_\Downloads\p1q_*.zip`（Listening用・Speaking用(`s`付き)がラウンドごとに2本）
+- 構成：`audio/<年度>_<回>/` 配下に `jun1kyu_<年度>_<回>_Listening_XX_...mp3` /
+  `..._Speaking_XX_...mp3` を展開。Listening 27トラック + Speaking 9トラック × 6回 = 216トラック。
+- `tracks.json` は `build-tracks.mjs` で自動生成（手編集しない）。将来ラウンドを追加する場合は
+  `audio/<年度>_<回>/` に同じ命名でmp3を置き、`build-tracks.mjs` の `ROUNDS` 配列に追記して
+  `node build-tracks.mjs` を再実行する。
+- スピーキングのパート構成はラウンドごとに微妙に違う（2023年度第3回だけ `A/C` 表記、他は
+  `A/B` 表記など）。これは元データの命名の違いであり、プレイヤー側のバグではない。
+
+## 著作権について（要注意）
+英検の過去問音声は英検協会が学習者向けに配布しているものだが、第三者への再配布・公開を
+どこまで許容しているかの利用規約は未確認。個人の学習目的での非公開URL運用を前提とし、
+サイト内で検索エンジンにインデックスされないようにする（`robots.txt` で全体禁止、
+`<meta name="robots" content="noindex">` をindex.htmlに設定）。SNS等でURLを公開しない。
+もし利用規約上グレーだと分かった場合は速やかに非公開化を検討する。
+
+## プレイヤーの機能
+- 年度回セレクト → Listening/Speakingのセクション表示 → トラッククリックで再生
+- 再生速度変更（0.75x/1.0x/1.25x/1.5x）、聴取済みチェック、再生位置の自動保存（localStorage）
+- 進捗キーは `tracks.json` の `file` パスなので、ファイル名やパスを変えると進捗がリセットされる
+
+## デプロイ（Netlify）
+- 本番URL：https://eiken-pre1-kakomon.netlify.app
+- 使用アカウント：`ryu20001208.jp@gmail.com`（チーム `ryu20001208-jp`）。サイト名 `eiken-pre1-kakomon`。
+- `access-gate.js`（`my-portal-ryu.netlify.app`でホスト）によるパスワード/Googleログインで
+  保護済み（2026-08-04〜。詳細は親CLAUDE.mdの「公開ページのアクセスゲート」参照）。
+  `robots.txt` と `<meta name="robots" content="noindex,nofollow">` で検索エンジンからは隠している。
+- 再デプロイ手順：このフォルダ（`英検準1級過去問プレイヤー/`）で `netlify deploy --prod --dir=.` を実行するだけ。
+  `.netlify/state.json` にsiteIdが設定済みなのでログイン・サイト指定は不要
+  （ただしCLIのログインアカウントが `ryu20001208.jp@gmail.com` になっている必要がある）。
+- 注意：ワークスペースのルート（`CLAUDE 作業場所/`）には別のNetlifyサイト
+  （`claude-workspace-ryuao`）がリンクされている。Netlify関連のコマンドは必ずこのフォルダ内で
+  実行し、ルートでは実行しないこと（`.netlify`が無いサブフォルダで実行すると親の設定を
+  辿ってしまう。既存の「英検準一級」プロジェクトでも同じ注意が書かれている）。
