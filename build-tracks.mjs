@@ -44,6 +44,11 @@ for (const r of ROUNDS) {
 const out = path.join(import.meta.dirname, 'tracks.json');
 fs.writeFileSync(out, JSON.stringify(data, null, 2) + '\n', 'utf8');
 
+// file:// で直接開いても fetch の CORS制約に引っかからないよう、
+// 同じデータを <script> 読み込み用のJSとしても書き出す（listening-marksheet.html用）。
+const outJs = path.join(import.meta.dirname, 'tracks.js');
+fs.writeFileSync(outJs, 'window.TRACKS_DATA = ' + JSON.stringify(data, null, 2) + ';\n', 'utf8');
+
 let total = 0;
 for (const r of ROUNDS) {
   for (const s of data[r].sections) total += s.tracks.length;
