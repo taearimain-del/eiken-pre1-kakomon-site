@@ -52,3 +52,6 @@
   （`claude-workspace-ryuao`）がリンクされている。Netlify関連のコマンドは必ずこのフォルダ内で
   実行し、ルートでは実行しないこと（`.netlify`が無いサブフォルダで実行すると親の設定を
   辿ってしまう。既存の「英検準一級」プロジェクトでも同じ注意が書かれている）。
+
+## 滞在時間ログ（2026-10-12）
+- `timelog.js`（原本 claude-workspace の `tools/timelog/timelog.js`）を `index.html` の末尾で読む（アプリID `eiken-pre1-kakomon`）。アクティビティログ（fort-log）で見られる。index.html を作り直したり元からコピーし直したりしたときも、この1行を残すこと。
