@@ -55,3 +55,6 @@
 
 ## 滞在時間ログ（2026-10-12）
 - `timelog.js`（原本 claude-workspace の `tools/timelog/timelog.js`）を `index.html` の末尾で読む（アプリID `eiken-pre1-kakomon`）。アクティビティログ（fort-log）で見られる。index.html を作り直したり元からコピーし直したりしたときも、この1行を残すこと。
+
+## 見た目：ポータルにそろえる（2026-10-20）
+- 2026-10-21 Fort様「ポータルからデザインをかけ離れすぎないように」「良くないアプリはUIも整えて」：`https://roadto-univ.pages.dev/theme.css` を読み、`<style id="pt-align">` で色の変数を `--pt-*` に（ダーク＝ポータルのHUD、ライト＝昼の設計図）。上端に「— FORT_DEX」の帯、見出し `.pt-title`、ボタンは角を落とし、入力欄は細い線。`<style id="pt-first">` は読み込み中の白い光り止め。入場の動きは access-gate.js → theme.js。音声・記録には触っていない。

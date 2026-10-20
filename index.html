@@ -2,6 +2,11 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#02060b" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f2f5f8" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="https://roadto-univ.pages.dev/theme.css">
+<style id="pt-first">html{background:#f2f5f8}@media (prefers-color-scheme: dark){html{background:#02060b}}</style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
 <style>html{visibility:hidden}</style>
@@ -226,10 +231,37 @@
     text-align: center;
   }
 </style>
+<style id="pt-align">
+.layout a { color: var(--pt-hud); }
+/* ポータルにそろえる（2026-10-20 Fort様「ポータルからデザインをかけ離れすぎないように」）。色は theme.css の --pt-* */
+/* 入力欄・ボタン・タブの共通の形（ポータルの線と角を落としたボタン） */
+input[type=text], input[type=number], input[type=time], input[type=date], input[type=search], select, textarea { background: var(--pt-bg2); color: var(--pt-text); border: 1px solid var(--pt-line2); border-radius: 0; }
+input:focus, select:focus, textarea:focus { outline: 1px solid var(--pt-hud); outline-offset: 0; border-color: var(--pt-hud); }
+select option { background: var(--pt-panel); color: var(--pt-text); }
+
+:root { --bg: var(--pt-bg); --panel: var(--pt-panel); --text: var(--pt-text); --muted: var(--pt-text2); --border: var(--pt-line2);
+  --accent: var(--pt-hud); --accent-weak: var(--pt-hud-weak); --done: var(--pt-ok); --done-weak: var(--pt-ok-weak); }
+body { font-family: var(--pt-jp); }
+.layout { padding-top: 0; }
+h1.pt-title { font-size: 1.15rem; margin-top: 4px; }
+.mode-tabs { gap: 2px; }
+.mode-tabs button { border: 0; border-radius: 0; background: var(--pt-hud-weak); color: var(--pt-text2); font-weight: 700; font-family: var(--pt-hudfont), var(--pt-jp); clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%); margin-right: -4px; }
+.mode-tabs button.active { background: var(--pt-hud); color: var(--pt-on-hud); }
+li.track { border-radius: 0; }
+li.track.active { box-shadow: inset 2px 0 0 var(--pt-hud); }
+.volume-title, .section-title, .chapter-title { color: var(--pt-amber); font-family: var(--pt-hudfont), var(--pt-jp); letter-spacing: .08em; }
+.track-pos, .progress-summary { font-family: var(--pt-hudfont), var(--pt-jp); }
+.progress-bar-outer { height: 3px; border-radius: 0; background: var(--pt-line); }
+.progress-bar-inner { background: var(--pt-hud); box-shadow: var(--pt-glow); border-radius: 0; }
+.player-bar { border-top: 1px solid var(--pt-line2); box-shadow: 0 -10px 30px -12px rgba(0,0,0,.6); }
+.controls button, .speed-group button, .sync-btn { border-radius: 0; clip-path: var(--pt-cut); }
+.controls button.primary, .speed-group button.active-speed { background: var(--pt-hud); border-color: var(--pt-hud); color: var(--pt-on-hud); }
+</style>
 </head>
-<body>
+<body class="pt-bg">
 <div class="layout">
-  <h1>英検準1級 過去問音声プレイヤー</h1>
+<header class="pt-top"><a class="pt-brand" href="https://roadto-univ.pages.dev/" title="ポータルに戻る"><i></i>FORT_DEX</a><span class="pt-where">英検</span></header>
+  <h1 class="pt-title">英検準1級 過去問音声プレイヤー</h1>
   <div class="sub" id="subLine">2023〜2025年度 全6回分 / Listening・Speaking</div>
   <div style="text-align:center;margin-bottom:10px;"><a href="https://eiken-marksheet.pages.dev/準1級/kakomon.html" style="color:#2f6fed;font-size:13px;">&#9654; マークシート演習（筆記・リスニング・Writing）はこちら</a></div>
 
